@@ -26,7 +26,8 @@ if (isset($_POST['STK'])) {
         'status' => 'PENDING'
     ]);
 
-    sleep(3);
+    sleep(5);
+
     if ($result) {
         if (checkPaymentStatus($response->CheckoutRequestID)) {
             echo json_encode(array(
