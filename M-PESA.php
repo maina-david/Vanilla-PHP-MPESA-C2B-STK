@@ -75,6 +75,30 @@ class Mpesa
         curl_close($curl);
         return $curl_response;
     }
+
+    public function checkTransactionStatus($checkout_request_id)
+    {
+        $token = $this->getToken();
+        $url = "https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query";
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization: Bearer ' . $token)); //setting custom header
+        $curl_post_data = array(
+            'BusinessShortCode' => $this->shortcode,
+            'Password' => $this->passkey,
+            'Timestamp' => $this->timestamp,
+            'CheckoutRequestID' => $checkout_request_id
+        );
+        $data_string = json_encode($curl_post_data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+        $curl_response = curl_exec($curl);
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curl_response = json_decode($curl_response);
+        curl_close($curl);
+        return $curl_response;
+    }
 }
 
 ?>

@@ -6,43 +6,66 @@ require('./connect.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = file_get_contents('php://input');
 
-    $resultCode = $result['Body']['stkCallback']['ResultCode'];
-    if ($resultCode == 0) {
-        $resultDesc = $result['Body']['stkCallback']['ResultDesc'];
+    $response = json_decode($result);
+    $responseCode = $response->Body->stkCallback->ResultCode;
+
+    if ($responseCode == 0) {
         $sql = 'UPDATE mpesa_transactions SET status = :status, result_code = :result_code, result_desc = :result_desc WHERE checkout_request_id = :checkout_request_id';
         $stmt = $pdo->prepare($sql);
         $result = $stmt->execute([
             'status' => 'SUCCESSFUL',
-            'result_code' => $resultCode,
-            'result_desc' => $result['Body']['stkCallback']['ResultDesc'],
-            'checkout_request_id' => $result['Body']['stkCallback']['CheckoutRequestID']
+            'result_code' => $responseCode,
+            'result_desc' => $response->Body->stkCallback->ResultDesc,
+            'checkout_request_id' => $response->Body->stkCallback->CheckoutRequestID
         ]);
     }else {
         $sql = 'UPDATE mpesa_transactions SET status = :status, result_code = :result_code, result_desc = :result_desc WHERE checkout_request_id = :checkout_request_id';
         $stmt = $pdo->prepare($sql);
         $result = $stmt->execute([
             'status' => 'FAILED',
-            'result_code' => $resultCode,
-            'result_desc' => $result['Body']['stkCallback']['ResultDesc'],
-            'checkout_request_id' => $result['Body']['stkCallback']['CheckoutRequestID']
+            'result_code' => $responseCode,
+            'result_desc' => $response->Body->stkCallback->ResultDesc,
+            'checkout_request_id' => $response->Body->stkCallback->CheckoutRequestID
         ]);
     }
+
     if ($result) {
         echo json_encode(array(
             'status' => 'success',
             'message' => 'Transaction successfully recorded'
         ));
-    }else {
+    } else {
         echo json_encode(array(
             'status' => 'error',
             'message' => 'Transaction not recorded'
         ));
     }
-
-}else {
+} else {
     echo json_encode(array(
         'status' => 'error',
         'message' => 'Method not allowed'
     ));
 }
 ?>
+
+<!-- $resultCode = $result['Body']['stkCallback']['ResultCode'];
+if ($resultCode == 0) {
+$resultDesc = $result['Body']['stkCallback']['ResultDesc'];
+$sql = 'UPDATE mpesa_transactions SET status = :status, result_code = :result_code, result_desc = :result_desc WHERE checkout_request_id = :checkout_request_id';
+$stmt = $pdo->prepare($sql);
+$result = $stmt->execute([
+'status' => 'SUCCESSFUL',
+'result_code' => $resultCode,
+'result_desc' => $result['Body']['stkCallback']['ResultDesc'],
+'checkout_request_id' => $result['Body']['stkCallback']['CheckoutRequestID']
+]);
+}else {
+$sql = 'UPDATE mpesa_transactions SET status = :status, result_code = :result_code, result_desc = :result_desc WHERE checkout_request_id = :checkout_request_id';
+$stmt = $pdo->prepare($sql);
+$result = $stmt->execute([
+'status' => 'FAILED',
+'result_code' => $resultCode,
+'result_desc' => $result['Body']['stkCallback']['ResultDesc'],
+'checkout_request_id' => $result['Body']['stkCallback']['CheckoutRequestID']
+]); -->
+}

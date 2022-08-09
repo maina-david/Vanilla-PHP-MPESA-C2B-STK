@@ -26,10 +26,10 @@ $statements = [
                 phone VARCHAR(20) NOT NULL,
                 short_code VARCHAR(20) NOT NULL,
                 account_reference VARCHAR(20) NOT NULL,
-                organization_balance VARCHAR(20) NOT NULL,
-                third_party_transaction_id VARCHAR(20) NOT NULL,
-                first_name VARCHAR(20) NOT NULL,
-                middle_name VARCHAR(20) NOT NULL,
+                organization_balance VARCHAR(20) NULL,
+                third_party_transaction_id VARCHAR(20) NULL,
+                first_name VARCHAR(20) NULL,
+                middle_name VARCHAR(20) NULL,
                 last_name VARCHAR(20) NULL,
                 PRIMARY KEY (id)
             )'
