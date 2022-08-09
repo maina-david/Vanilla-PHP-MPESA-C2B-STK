@@ -59,7 +59,7 @@ if (isset($_POST['STK'])) {
             'checkout_request_id' => $response->Body->stkCallback->CheckoutRequestID
         ]);
 
-        if ($response->Body->stkCallback->ResultCode == 0) {
+        if ($response->Body->stkCallback->ResultCode === 0) {
             return true;
         }else {
             return false;
